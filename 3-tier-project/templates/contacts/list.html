@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Contacts</title>
+</head>
+<style>
+    table, th, td {
+      border: 1px solid black;
+    }
+    table th {
+      background: yellow;
+    }
+
+    table td {
+        padding: 0 20px 0 20px;
+    }
+</style>
+<body>
+<h1>List of contacts</h1>
+<p>Add contact:
+    <button><a href="/add_contact">Add Contacts</a></button>
+</p>
+<p>Search contact:
+    <button><a href="/search">Search Contact</a></button>
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {%for contact in contacts%}
+    <tr>
+        <td>{{contact.name}}</td>
+        <td>{{contact.phone}}</td>
+        <td><button id="button" value={{contact.id}} onclick="deleteContact()">Delete</button></td>
+    </tr>
+    {%endfor%}
+    </tbody>
+</table>
+<div>
+</div>
+</body>
+    <script>
+        // Fetch data from the backend and update the HTML
+        async function deleteContact() {
+            const contact_id = document.getElementById('button').value;
+            const response = await fetch('/api/contacts/'+contact_id, {
+                method: 'DELETE'
+            });
+            await response.json();
+            window.location.href = "/contacts";
+        }
+    </script>
+</html>

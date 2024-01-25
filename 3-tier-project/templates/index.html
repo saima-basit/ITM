@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Tier Flask App</title>
+</head>
+<body>
+    <h1>Welcome to the 3-Tier Flask App</h1>
+    <p>Data from the backend: <span id="data"></span></p>
+    <p>View all contacts: <button><a href="/contacts">List Contacts</a></button></p>
+    
+    <script>
+        // Fetch data from the backend and update the HTML
+        async function fetchData() {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+            document.getElementById('data').innerText = data.message;
+        }
+        fetchData();
+    </script>
+</body>
+</html>

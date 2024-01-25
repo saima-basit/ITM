@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:8.0.30
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'itm_project'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'itm_project'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '33066:3306'
+    volumes:
+      - itm_project:/var/lib/mysql
+  server:
+    build: .
+    container_name: itm_project
+    ports:
+     - "8000:8000"
+    volumes:
+      - .:/code
+    entrypoint:
+      - /bin/sh
+      - -ecx
+      - python3 app.py
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=itm_project
+      - DATABASE_USER=itm_project
+      - DATABASE_PASSWORD=password
+      - DATABASE_PORT=3306
+    depends_on:
+      - db
+# Names our volume
+volumes:
+  itm_project:
