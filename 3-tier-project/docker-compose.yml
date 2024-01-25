@@ -15,14 +15,12 @@ services:
       # <Port exposed> : < MySQL Port running inside container>
       - '33066:3306'
     volumes:
-      - itm_project:/var/lib/mysql
+      - ~/mysql_docker_data:/var/lib/mysql
   server:
-    build: .
+    image: itm_project
     container_name: itm_project
     ports:
-     - "8000:8000"
-    volumes:
-      - .:/code
+     - "1111:1111"
     entrypoint:
       - /bin/sh
       - -ecx
@@ -34,7 +32,4 @@ services:
       - DATABASE_PASSWORD=password
       - DATABASE_PORT=3306
     depends_on:
-      - db
-# Names our volume
-volumes:
-  itm_project:
+    - db
