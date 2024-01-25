@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect
 
-from contacts_api import contacts_bp
-from models import db
+from models import db, Contact
 from settings import SQLALCHEMY_DATABASE_URI
 
 app = Flask(__name__)
@@ -11,30 +10,11 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-app.register_blueprint(contacts_bp)
-
-# Dummy data for demonstration
-data_from_database = {"message": "Hello from the database!"}
-contacts = [
-    {
-        "name": "basit",
-        "phone": "03****02333"
-    },
-    {
-        "name": "arham",
-        "phone": "0332****333"
-    }
-]
-
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-
-@app.route('/api/data')
-def get_data():
-    return jsonify(data_from_database)
+    contacts = Contact.query.all()
+    return render_template('contacts/list.html', **{"contacts": contacts})
 
 
 @app.route('/add_contact')
@@ -42,22 +22,22 @@ def view_add_contacts():
     return render_template('contacts/add.html')
 
 
-@app.get('/api/contacts')
-def get_all_contacts():
-    return jsonify({"contacts": contacts})
+@app.post('/api/contacts')
+def add_contacts():
+    contact = Contact()
+    contact.name = request.form["name"]
+    contact.phone = request.form["phone"]
+    db.session.add(contact)
+    db.session.commit()
+    return redirect('/')
 
 
-
-@app.post('/api/contacts/search')
-def search_contacts():
-    input_ = request.form["name"]
-    print(input_)
-    return redirect('/contacts')
-
-
-@app.route('/search')
-def view_search_contacts():
-    return render_template('contacts/search.html')
+@app.delete('/api/contacts/<int:contact_id>')
+def delete_contacts(contact_id):
+    contact = Contact.query.filter_by(id=contact_id).first()
+    db.session.delete(contact)
+    db.session.commit()
+    return jsonify({})
 
 
 if __name__ == '__main__':

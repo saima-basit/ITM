@@ -4,58 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Contacts</title>
-</head>
-<style>
-    table, th, td {
-      border: 1px solid black;
-    }
-    table th {
-      background: yellow;
-    }
-
-    table td {
-        padding: 0 20px 0 20px;
-    }
-</style>
-<body>
-<h1>List of contacts</h1>
-<p>Add contact:
-    <button><a href="/add_contact">Add Contacts</a></button>
-</p>
-<p>Search contact:
-    <button><a href="/search">Search Contact</a></button>
-</p>
-
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Phone</th>
-    </tr>
-    </thead>
-    <tbody>
-
-    {%for contact in contacts%}
-    <tr>
-        <td>{{contact.name}}</td>
-        <td>{{contact.phone}}</td>
-        <td><button id="button" value={{contact.id}} onclick="deleteContact()">Delete</button></td>
-    </tr>
-    {%endfor%}
-    </tbody>
-</table>
-<div>
-</div>
-</body>
-    <script>
-        // Fetch data from the backend and update the HTML
-        async function deleteContact() {
-            const contact_id = document.getElementById('button').value;
-            const response = await fetch('/api/contacts/'+contact_id, {
-                method: 'DELETE'
-            });
-            await response.json();
-            window.location.href = "/contacts";
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
         }
-    </script>
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            margin: 20px auto; /* Center horizontally */
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>List of Contacts</h1>
+    <p>Add contact: <button><a href="/add_contact">Add Contacts</a></button></p>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{ contact.name }}</td>
+            <td>{{ contact.phone }}</td>
+            <td><button value="{{ contact.id }}" onclick="deleteContact(this)">Delete</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    async function deleteContact(button) {
+        const contact_id = button.value;
+        const response = await fetch('/api/contacts/' + contact_id, {
+            method: 'DELETE'
+        });
+        await response.json();
+        window.location.href = "/";
+    }
+</script>
+</body>
 </html>
