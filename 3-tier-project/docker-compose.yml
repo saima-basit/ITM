@@ -19,6 +19,8 @@ services:
   server:
     image: itm_project
     container_name: itm_project
+    volumes:
+      - .:/code
     ports:
      - "1111:1111"
     entrypoint:
