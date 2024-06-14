@@ -5,11 +5,7 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-      - apt-get update
-      - apt-get install -y python3-dev default-libmysqlclient-dev
-      - apt-get install -y python3-mysqldb
       - cd 3-tier-project
-      - pip install -r requirements.txt
   build:
     commands:
       - echo "Stopping existing containers"
