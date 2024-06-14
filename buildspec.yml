@@ -8,17 +8,18 @@ phases:
       - cd 3-tier-project
   build:
     commands:
-      - echo "Stopping existing containers"
-      - docker-compose down
       - echo "Building docker images"
-      - docker build -t itm_project .
-      - echo "Running containers"
-      - docker-compose up -d
+      - aws codebuild build --project-name my-project-name --output json > build_output.json
+      - cat build_output.json # Displaying the content of build_output.json for debugging purposes
+      - # Extract image details from build_output.json and save to imagedefinitions.json
+      - echo '{"name":"app","imageUri":"your_image_uri"}' > imagedefinitions.json
+
   post_build:
     commands:
-      - printf '[{"name":"app","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
       - cp imagedefinitions.json ../imagedefinitions.json
       - cd ..
 
 artifacts:
-  files: imagedefinitions.json
+  files:
+    - imagedefinitions.json
+
