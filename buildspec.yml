@@ -9,7 +9,7 @@ phases:
   build:
     commands:
       - echo "Building docker images"
-      - aws codebuild build --project-name 3rd --output json > build_output.json
+      - aws codebuild start-build --project-name 3rd --output json > build_output.json
       - cat build_output.json # Displaying the content of build_output.json for debugging purposes
       - # Extract image details from build_output.json and save to imagedefinitions.json
       - echo '{"name":"app","imageUri":"your_image_uri"}' > imagedefinitions.json
