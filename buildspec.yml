@@ -6,20 +6,29 @@ phases:
       python: 3.9
     commands:
       - cd 3-tier-project
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 179383659683.dkr.ecr.ap-southeast-2.amazonaws.com
+      - REPOSITORY_URI=179383659683.dkr.ecr.ap-southeast-2.amazonaws.com/app
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      - echo "Building docker images"
-      - aws codebuild start-build --project-name 3rd --output json > build_output.json
-      - cat build_output.json # Displaying the content of build_output.json for debugging purposes
-      - # Extract image details from build_output.json and save to imagedefinitions.json
-      - echo '{"name":"app","imageUri":"your_image_uri"}' > imagedefinitions.json
-
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - cp imagedefinitions.json ../imagedefinitions.json
       - cd ..
-
 artifacts:
-  files:
-    - imagedefinitions.json
-
+    files: imagedefinitions.json
