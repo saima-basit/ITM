@@ -1,7 +1,7 @@
 import os
 
 MYSQL_DATABASE_HOST = os.environ.get('DATABASE_HOST', "127.0.0.1")
-MYSQL_DATABASE_PORT = os.environ.get('DATABASE_PORT', "33066")
+MYSQL_DATABASE_PORT = os.environ.get('DATABASE_PORT', "3306")
 MYSQL_DATABASE_DB = 'itm_project'
 MYSQL_DATABASE_USER = 'itm_project'
 MYSQL_DATABASE_PASSWORD = 'password'
